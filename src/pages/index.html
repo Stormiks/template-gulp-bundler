@@ -4,7 +4,6 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Навигация по страницам</title>
-		<script src="/assets/lib/jquery-3.4.1.js"></script>
 		<style>
 			html,
 			body {
@@ -90,58 +89,80 @@
 					<a href="/" title="Обратно к карте страниц">Обратно к карте страниц</a>
 				</li>
 			</ul>
-			<div class="nav">
+			<div class="nav" x-data="navBar()" x-init="mounted()">
 				<nav>
 					<h3>заголовок проекта</h3>
 					<ul>
-						<li>
-							<a href="/">Ссылка</a>
-						</li>
+						<template x-for="(link, ixd) in pages" :key="ixd">
+							<li :data-link-id="ixd">
+								<a
+									@click="onOpenPage(ixd, $event)"
+									:href="link.url"
+									x-text="link.title"
+								></a>
+							</li>
+						</template>
 					</ul>
 				</nav>
 
-				<div class="iframe-wrapper">
-					<button class="iframe-close" id="iframe-close">Закрыть окно просмотра страницы</button>
+				<div
+					class="iframe-wrapper"
+					:class="{ 'open': showIframe() }"
+				>
+					<button
+						class="iframe-close"
+						id="iframe-close"
+						@click="onIframeClose()"
+						:class="{ 'open': showIframe() }"
+					>Закрыть окно просмотра страницы</button>
+
+					<template x-if="showIframe()">
+						<iframe
+							class="iframe-page"
+							id="iframe-page"
+							:src="selectedPage().url"
+						></iframe>
+					</template>
 				</div>
 			</div>
 		</section>
 
+		<script type="text/javascript" src="/assets/lib/alpine.js"></script>
+
 		<script>
-			function iframePage(href) {
-				$('.iframe-close').addClass('open')
-				$('.iframe-wrapper').addClass('open')
-				$('<iframe>', {
-					class: 'iframe-page',
-					id: 'iframe-page',
-					src: href,
-				}).appendTo($('.iframe-wrapper'))
-			}
-			$(document).ready(function () {
-				let localPage = localStorage.getItem('curPageLocal') || 0
+			function navBar() {
+				return {
+					selectedPageIndex: localStorage.getItem('dbIndexPage') || -1,
+					pages: [
+						{
+							title: 'Ссылка',
+							url: 'views/'
+						}
+					],
+					showIframe() {
+						return this.selectedPageIndex > -1
+					},
+					selectedPage() {
+						return this.selectedPageIndex > -1 ? this.pages[this.selectedPageIndex] : {}
+					},
 
-				if (localPage) {
-					console.log(localPage)
-					iframePage(localPage)
+					mounted() {
+						if (this.selectedPageIndex) {
+							this.selectedPageIndex = localStorage.getItem('dbIndexPage') || -1
+						}
+					},
+					onOpenPage(index, event) {
+						event.preventDefault()
+						localStorage.setItem('dbIndexPage', index)
+						this.selectedPageIndex = index
+					},
+					onIframeClose(e) {
+						localStorage.removeItem('dbIndexPage')
+						console.log('close', this.selectedPageIndex);
+						this.selectedPageIndex = -1
+					}
 				}
-
-				$('.nav li a').on('click', function (e) {
-					e.preventDefault()
-					e.stopPropagation()
-					let aHref = $(this).attr('href')
-
-					localStorage.setItem('curPageLocal', aHref)
-					iframePage(aHref)
-				})
-
-				$('.iframe-close').on('click', function (e) {
-					localStorage.removeItem('curPageLocal')
-					$('#iframe-page').remove()
-					$('.iframe-wrapper').removeClass('open')
-					setTimeout(function () {
-						$('.iframe-close').removeClass('open')
-					}, 200)
-				})
-			})
+			}
 		</script>
 	</body>
 </html>
