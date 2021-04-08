@@ -1,8 +1,22 @@
 {
   "name": "template-gulp-bundler",
   "version": "1.0.0",
-  "private": true,
-  "author": "Skylinker <skylinkertu33@gmail.com> (https://stormiks.github.io)",
+  "private": false,
+  "author": {
+    "name" : "Skylinker",
+    "email" : "skylinkertu33@gmail.com",
+    "url" : "https://stormiks.github.io/"
+  },
+  "keywords": [
+    "gulp4",
+    "bundler",
+    "gulp",
+    "template"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Stormiks/template-gulp4-bundler.git"
+  },
   "scripts": {
     "dev": "gulp",
     "dev:watch": "gulp watch",
@@ -29,5 +43,10 @@
   },
   "dependencies": {
     "gulp-cli": "^2.2.0"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.21.0 <=14.16.1",
+    "npm": "~6.14.11"
   }
 }
