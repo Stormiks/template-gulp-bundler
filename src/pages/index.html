@@ -1,168 +1,186 @@
 <!DOCTYPE html>
 <html lang="ru">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Навигация по страницам</title>
-		<style>
-			html,
-			body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-			}
 
-			body {
-				position: relative;
-				display: flex;
-				font-size: 14px;
-			}
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Навигация по страницам</title>
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
 
-			.iframe-wrapper {
-				display: flex;
-				align-items: center;
-				flex-direction: column;
-				justify-content: center;
-				transition: 0.1s;
-			}
+      body {
+        position: relative;
+        display: flex;
+        font-size: 14px;
+      }
 
-			.iframe-page {
-				position: absolute;
-				z-index: -1;
-				margin: 0;
-				padding: 0;
-				border: none;
-			}
+      .iframe-wrapper {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        transition: 0.1s;
+      }
 
-			.iframe-wrapper.open .iframe-page {
-				z-index: 2;
-				top: 0px;
-				right: 0px;
-				bottom: 0px;
-				left: 0px;
-				width: 100%;
-				height: 100%;
-			}
+      .iframe-page {
+        position: absolute;
+        z-index: -1;
+        margin: 0;
+        padding: 0;
+        border: none;
+      }
 
-			.iframe-wrapper::before {
-				position: baseline;
-				z-index: 1;
-				width: 100%;
-				height: 100%;
-				background-color: rgba(0, 0, 0, 0.4);
-			}
+      .iframe-wrapper.open .iframe-page {
+        z-index: 2;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+      }
 
-			.iframe-close {
-				position: absolute;
-				z-index: 10000;
-				top: 20px;
-				right: 20px;
-				display: none;
-				padding: 0.5rem;
-				cursor: pointer;
-				transition: 0.4s;
-			}
+      .iframe-wrapper::before {
+        position: baseline;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
 
-			.iframe-close.open {
-				display: block;
-			}
+      .iframe-close {
+        position: absolute;
+        z-index: 10000;
+        top: 20px;
+        right: 20px;
+        display: none;
+        padding: 0.5rem;
+        cursor: pointer;
+        transition: 0.4s;
+      }
 
-			.iframe-close:hover {
-				cursor: pointer;
-				transform: rotateX(360deg) scale(1.2) translateX(-5%);
-			}
+      .iframe-close.open {
+        display: block;
+      }
 
-			.iframe-close:active {
-				cursor: pointer;
-				transform: scale(1);
-			}
-		</style>
-	</head>
+      .iframe-close:hover {
+        cursor: pointer;
+        transform: rotateX(360deg) scale(1.2) translateX(-5%);
+      }
 
-	<body>
-		<section>
-			<h1>Карты страниц</h1>
+      .iframe-close:active {
+        cursor: pointer;
+        transform: scale(1);
+      }
 
-			<ul>
-				<li>
-					<a href="/" title="Обратно к карте страниц">Обратно к карте страниц</a>
-				</li>
-			</ul>
-			<div class="nav" x-data="navBar()" x-init="mounted()">
-				<nav>
-					<h3>заголовок проекта</h3>
-					<ul>
-						<template x-for="(link, ixd) in pages" :key="ixd">
-							<li :data-link-id="ixd">
-								<a
-									@click="onOpenPage(ixd, $event)"
-									:href="link.url"
-									x-text="link.title"
-								></a>
-							</li>
-						</template>
-					</ul>
-				</nav>
+    </style>
+  </head>
 
-				<div
-					class="iframe-wrapper"
-					:class="{ 'open': showIframe() }"
-				>
-					<button
-						class="iframe-close"
-						id="iframe-close"
-						@click="onIframeClose()"
-						:class="{ 'open': showIframe() }"
-					>Закрыть окно просмотра страницы</button>
+  <body>
+    <section>
+      <h1>Карты страниц</h1>
 
-					<template x-if="showIframe()">
-						<iframe
-							class="iframe-page"
-							id="iframe-page"
-							:src="selectedPage().url"
-						></iframe>
-					</template>
-				</div>
-			</div>
-		</section>
+      <ul>
+        <li>
+          <a
+            href="/"
+            title="Обратно к карте страниц"
+          >Обратно к карте страниц</a>
+        </li>
+      </ul>
+      <div
+        class="nav"
+        x-data="navBar"
+        x-init="mounted"
+      >
+        <nav>
+          <h3>заголовок проекта</h3>
+          <ul>
+            <template
+              x-for="(link, ixd) in pages"
+              x-bind:key="ixd"
+            >
+              <li x-bind:data-link-id="ixd">
+                <a
+                  x-on:click="onOpenPage(ixd, $event)"
+                  x-bind:href="link.url"
+                  x-text="link.title"
+                ></a>
+              </li>
+            </template>
+          </ul>
+        </nav>
 
-		<script type="text/javascript" src="/assets/lib/alpine.js"></script>
+        <div
+          class="iframe-wrapper"
+          x-bind:class="{ 'open': showIframe() }"
+        >
+          <button
+            class="iframe-close"
+            id="iframe-close"
+            x-on:click="onIframeClose()"
+            x-bind:class="{ 'open': showIframe() }"
+          >Закрыть окно просмотра страницы</button>
 
-		<script>
-			function navBar() {
-				return {
-					selectedPageIndex: localStorage.getItem('dbIndexPage') || -1,
-					pages: [
-						{
-							title: 'Ссылка',
-							url: 'views/'
-						}
-					],
-					showIframe() {
-						return this.selectedPageIndex > -1
-					},
-					selectedPage() {
-						return this.selectedPageIndex > -1 ? this.pages[this.selectedPageIndex] : {}
-					},
+          <template x-if="showIframe()">
+            <iframe
+              class="iframe-page"
+              id="iframe-page"
+              x-bind:src="selectedPage().url"
+            ></iframe>
+          </template>
+        </div>
+      </div>
+    </section>
 
-					mounted() {
-						if (this.selectedPageIndex) {
-							this.selectedPageIndex = localStorage.getItem('dbIndexPage') || -1
-						}
-					},
-					onOpenPage(index, event) {
-						event.preventDefault()
-						localStorage.setItem('dbIndexPage', index)
-						this.selectedPageIndex = index
-					},
-					onIframeClose(e) {
-						localStorage.removeItem('dbIndexPage')
-						console.log('close', this.selectedPageIndex);
-						this.selectedPageIndex = -1
-					}
-				}
-			}
-		</script>
-	</body>
+    <script>
+      function navBar() {
+        return {
+          selectedPageIndex: localStorage.getItem('dbIndexPage') || -1,
+          pages: [
+            {
+              title: 'Ссылка',
+              url: 'views/'
+            }
+          ],
+          showIframe() {
+            return this.selectedPageIndex > -1
+          },
+          selectedPage() {
+            return this.selectedPageIndex > -1 ? this.pages[this.selectedPageIndex] : {}
+          },
+
+          mounted() {
+            if (this.selectedPageIndex) {
+              this.selectedPageIndex = localStorage.getItem('dbIndexPage') || -1
+            }
+          },
+          onOpenPage(index, event) {
+            event.preventDefault()
+            localStorage.setItem('dbIndexPage', index)
+            this.selectedPageIndex = index
+          },
+          onIframeClose(e) {
+            localStorage.removeItem('dbIndexPage')
+            console.log('close', this.selectedPageIndex);
+            this.selectedPageIndex = -1
+          }
+        }
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="/assets/lib/alpine.js"
+    ></script>
+  </body>
+
 </html>
